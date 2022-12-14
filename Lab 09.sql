@@ -48,7 +48,29 @@ VALUES
 ('SU07', 'DAS', 'C04')
 
 -- Question 5
+-- DATEDIFF (Interval [YEAR/MONTH/DAY], CURRENTDATE ,GETDATE())
+SELECT StudentID, Name, DATEDIFF(YEAR, Student.DOB, GETDATE()) AS Age FROM Student 
 
+-- Question 6
+SELECT *, DATEDIFF(YEAR, Student.DOB, GETDATE()) AS Age FROM Student WHERE DATEDIFF(YEAR, Student.DOB, GETDATE()) > 18
+
+-- Add 'Age' column that auto update data
+ALTER TABLE Student ADD Age AS (DATEDIFF(YEAR, Student.DOB, GETDATE()))
+
+-- Question 7
+SELECT * FROM COURSE INNER JOIN Student ON COURSE.CourseID = Student.CourseID INNER JOIN Subject ON Course.CourseID = Subject.CourseID
+
+-- Question 8
+SELECT * FROM Course, Subject WHERE Course.CourseID = Subject.CourseID
+
+-- Question 9
+SELECT * FROM Course, Student, Subject WHERE Course.CourseID = Subject.CourseID AND Course.CourseID = Student.CourseID
+
+-- Question 10
+SELECT * FROM Course LEFT JOIN Student ON Course.CourseID = Student.CourseID ORDER BY Course.Name 
+
+-- Question 11
+SELECT * FROM Course RIGHT JOIN Student ON Course.CourseID = Student.CourseID ORDER BY Student.Name
 
 SELECT * FROM Course
 SELECT * FROM Student

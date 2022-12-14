@@ -51,7 +51,7 @@ VALUES
 SELECT * FROM Student WHERE Gender = 'Female' AND CourseID = (SELECT CourseID FROM Course WHERE Name = 'Degree') ORDER BY Name DESC
 
 -- Question 1(b)
-SELECT * FROM Student INNER JOIN Course ON Student.CourseID = Course.CourseID WHERE Student.Gender = 'Female' AND Course.Name = 'Degree' ORDER BY Name DESC
+SELECT * FROM Student INNER JOIN Course ON Student.CourseID = Course.CourseID WHERE Student.Gender = 'Female' AND Course.Name = 'Degree' ORDER BY Course.Name DESC
 
 -- Question 2(a)
 SELECT * FROM Subject WHERE CourseID = (SELECT CourseID FROM Course WHERE EntryQualification = '5 credits in O Level') ORDER BY Name ASC
@@ -67,20 +67,22 @@ SELECT * FROM Subject INNER JOIN Course ON Subject.CourseID = Course.CourseID WH
 
 -- Question 4
 -- Calculate the total number of subjects for each course. (*Hint: use Count & Group by)
-SELECT COUNT(*) FROM Subject WHERE CourseID = (SELECT CourseID FROM Course) GROUP BY CourseID
+SELECT CourseID, COUNT(*) FROM Subject WHERE CourseID IN (SELECT CourseID FROM Course) GROUP BY CourseID
 -- Answer
 SELECT CourseID, COUNT(SubjectID) AS TotalNumOFSubject FROM Subject GROUP BY CourseID
 SELECT Course.Name, COUNT(SubjectID) FROM Subject INNER JOIN Course ON Subject.CourseID = Course.CourseID GROUP BY Course.Name
 
 -- Question 5s
 -- Calculate the total number of students for each course. (*Hint: use Count & Group by)
-SELECT COUNT(CourseID) FROM Student WHERE CourseID = (SELECT CourseID FROM Course)
+SELECT CourseID, COUNT(CourseID) FROM Student WHERE CourseID IN (SELECT CourseID FROM Course) GROUP BY CourseID
 -- Answer
 SELECT Course.Name, COUNT(StudentID) AS TotalNumOfStudent FROM Student JOIN Course ON Course.CourseID = Student.CourseID GROUP BY Course.Name
 
 -- Question 6
+-- Add 'Age' column that auto update data
+ALTER TABLE Student ADD Age AS (DATEDIFF(YEAR, Student.DOB, GETDATE()))
 -- Show a list of students whose age is more than the average age of all students.
-SELECT * FROM Student WHERE DATEDIFF(YEAR, DOB, GETDATE()) > (SELECT AVE(DATEDIFF(YEAR, DOB, GETDATE())) FROM Student)
+SELECT * FROM Student WHERE DATEDIFF(YEAR, DOB, GETDATE()) > (SELECT AVG(DATEDIFF(YEAR, DOB, GETDATE())) FROM Student)
 
 -- Question 7
 -- List all students in descending order of age.
@@ -92,4 +94,8 @@ SELECT Student.CourseID, COUNT(Student.StudentID) FROM Student INNER JOIN Course
 
 -- Question 9
 -- Show a list of course which has exactly 1 subject. (*Hint: use Count & Group by & Having)
-SELECT Subject.CourseID, COUNT(Subject.SubjectID) FROM Subject INNER JOIN Course ON Subject.CourseID = Course.CourseID GROUP BY Subject.Name HAVING COUNT(Subject.SubjectID) = 1 
+SELECT Course.CourseID, COUNT(Subject.SubjectID) FROM Course INNER JOIN Subject ON Course.CourseID = Subject.CourseID GROUP BY Course.CourseID HAVING COUNT(Subject.SubjectID) = 1 
+
+SELECT * FROM Course
+SELECT * FROM Student
+SELECT * FROM Subject
